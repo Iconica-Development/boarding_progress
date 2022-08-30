@@ -135,6 +135,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0"
+  stepper:
+    dependency: transitive
+    description:
+      path: "."
+      ref: "v-0.0.1"
+      resolved-ref: a6130f4d332ba261c35c38b0b49e7d15b0e6e6f4
+      url: "https://github.com/Iconica-Development/stepper.git"
+    source: git
+    version: "0.0.1"
   stream_channel:
     dependency: transitive
     description:
