@@ -14,6 +14,8 @@ class BoardingProgress extends StatefulWidget {
     this.pageHeight = 400,
     this.initialPage = 0,
     this.theme = const BoardingProgressTheme(),
+    this.previousButtonText = 'Previous',
+    this.nextButtonText = 'Next',
     Key? key,
   }) : super(key: key);
 
@@ -37,12 +39,17 @@ class BoardingProgress extends StatefulWidget {
   /// The theme for the underlying [MultiStepperView] is included.
   final BoardingProgressTheme theme;
 
+  final String previousButtonText;
+
+  final String nextButtonText;
+
   @override
   State<BoardingProgress> createState() => _BoardingProgressState();
 }
 
 class _BoardingProgressState extends State<BoardingProgress> {
   int _currentStep = 0;
+  final bool _canContinue = false;
 
   @override
   void initState() {
@@ -87,6 +94,61 @@ class _BoardingProgressState extends State<BoardingProgress> {
             ],
           ],
         ),
+        Row(
+          children: [
+            if (_currentStep > 0) ...[
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _currentStep--;
+                  });
+                },
+                child: Text(widget.previousButtonText),
+              ),
+            ],
+            const Spacer(),
+            if (_currentStep < widget.pages.length - 1 && _canContinue) ...[
+              TextButton(
+                onPressed: () async {
+                  var result = false;
+                  if (widget.pages[_currentStep].showConfirmation != null &&
+                      widget.pages[_currentStep].showConfirmation!()) {
+                    // show dialog
+                    result = await showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Confirm'),
+                        content: const Text('Are you sure?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                            child: const Text('No'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                            child: const Text('Yes'),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    result = true;
+                  }
+                  if (_canContinue && result) {
+                    setState(() {
+                      _currentStep++;
+                    });
+                  }
+                },
+                child: Text(widget.nextButtonText),
+              ),
+            ],
+          ],
+        )
       ],
     );
   }
